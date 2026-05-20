@@ -1,6 +1,6 @@
 {
   "name": "@northsoon/phosphor-icons-astro",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Phosphor icons as fully-typed Astro components — size, weight, color, mirrored and aria-label props out of the box",
   "type": "module",
   "repository": {
