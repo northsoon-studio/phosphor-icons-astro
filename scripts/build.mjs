@@ -1,13 +1,13 @@
 /**
- * build.mjs — Generador de componentes Astro para @northsoon/phosphor-icons-astro
+ * build.mjs — Component generator for @northsoon/phosphor-icons-astro
  *
- * Cómo funciona:
- *   1. Lee los SVGs de @phosphor-icons/core (todos los pesos: thin/light/regular/bold/fill/duotone)
- *   2. Agrupa por nombre de icono
- *   3. Genera UN archivo .astro por icono con todos los pesos embebidos
- *   4. El peso, tamaño, color y accesibilidad son props tipadas en cada componente
+ * How it works:
+ *   1. Reads SVGs from @phosphor-icons/core (all weights: thin/light/regular/bold/fill/duotone)
+ *   2. Groups them by icon name
+ *   3. Generates ONE .astro file per icon with all weights embedded
+ *   4. Weight, size, color and accessibility are typed props on each component
  *
- * Uso: npm run build
+ * Usage: npm run build
  */
 
 import fs from "fs";
@@ -19,17 +19,17 @@ const ROOT = path.join(__dirname, "..");
 const ASSETS_DIR = path.join(ROOT, "node_modules/@phosphor-icons/core/assets");
 const OUTPUT_DIR = path.join(ROOT, "icons");
 
-/** Todos los pesos disponibles en Phosphor */
+/** All available weights in Phosphor */
 const WEIGHTS = ["thin", "light", "regular", "bold", "fill", "duotone"];
 
-/** Regexes pre-compiladas — evita crear new RegExp() por cada uno de los ~9000 archivos SVG */
+/** Pre-compiled regexes — avoids creating new RegExp() for each of the ~9000 SVG files */
 const weightSuffixRegex = Object.fromEntries(WEIGHTS.map((w) => [w, new RegExp(`-${w}$`)]));
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** Convierte "arrow-right" → "ArrowRight" */
+/** Converts "arrow-right" → "ArrowRight" */
 function toPascalCase(str) {
   return str
     .split("-")
@@ -38,19 +38,19 @@ function toPascalCase(str) {
 }
 
 /**
- * Extrae el contenido interior del <svg> (paths, circles, polylines…).
- * También elimina el rect decorativo que Phosphor incluye como bounding box.
+ * Extracts the inner content of the <svg> element (paths, circles, polylines…).
+ * Also removes the decorative rect that Phosphor includes as a bounding box.
  */
 function extractSvgInner(rawSvg) {
   const match = rawSvg.match(/<svg[^>]*>([\s\S]*?)<\/svg>/);
   if (!match) return "";
   return match[1]
-    .replace(/<rect[^>]*width="256"[^>]*\/?>/g, "") // quita el rect de fondo
+    .replace(/<rect[^>]*width="256"[^>]*\/?>/g, "") // remove background bounding rect
     .trim();
 }
 
 // ---------------------------------------------------------------------------
-// 1. Leer todos los SVGs y agrupar por icono
+// 1. Read all SVGs and group by icon
 // ---------------------------------------------------------------------------
 
 /** @type {Map<string, Record<string, string>>} kebabName → { weight: svgInnerContent } */
@@ -60,15 +60,15 @@ for (const weight of WEIGHTS) {
   const weightDir = path.join(ASSETS_DIR, weight);
 
   if (!fs.existsSync(weightDir)) {
-    console.warn(`⚠️  Directorio no encontrado para peso "${weight}": ${weightDir}`);
+    console.warn(`⚠️  Directory not found for weight "${weight}": ${weightDir}`);
     continue;
   }
 
   const files = fs.readdirSync(weightDir).filter((f) => f.endsWith(".svg"));
 
   for (const file of files) {
-    // El formato del archivo es "<kebab-name>-<weight>.svg"
-    // Quitamos el sufijo "-<weight>" para obtener el nombre del icono
+    // File format is "<kebab-name>-<weight>.svg"
+    // Strip the "-<weight>" suffix to get the icon name
     const nameWithWeight = path.basename(file, ".svg");
     const kebabName = nameWithWeight.replace(weightSuffixRegex[weight], "");
 
@@ -83,13 +83,13 @@ for (const weight of WEIGHTS) {
 }
 
 // ---------------------------------------------------------------------------
-// 2. Preparar carpeta de salida
+// 2. Prepare output directory
 // ---------------------------------------------------------------------------
 
 if (!fs.existsSync(OUTPUT_DIR)) {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 } else {
-  // Limpiar archivos .astro anteriores
+  // Remove previously generated .astro files
   for (const file of fs.readdirSync(OUTPUT_DIR)) {
     if (file.endsWith(".astro")) {
       fs.unlinkSync(path.join(OUTPUT_DIR, file));
@@ -98,7 +98,7 @@ if (!fs.existsSync(OUTPUT_DIR)) {
 }
 
 // ---------------------------------------------------------------------------
-// 3. Generar un .astro por icono
+// 3. Generate one .astro per icon
 // ---------------------------------------------------------------------------
 
 let generated = 0;
@@ -106,7 +106,7 @@ let generated = 0;
 for (const [kebabName, weightPaths] of iconMap) {
   const pascalName = toPascalCase(kebabName);
 
-  // Serializar los paths de cada peso como objeto JS literal seguro
+  // Serialize each weight's paths as a safe JS object literal
   const pathsLines = WEIGHTS.filter((w) => weightPaths[w] !== undefined)
     .map((w) => `  ${JSON.stringify(w)}: ${JSON.stringify(weightPaths[w])}`)
     .join(",\n");
@@ -118,25 +118,24 @@ import type { HTMLAttributes } from "astro/types";
 
 export interface Props extends Omit<HTMLAttributes<"svg">, "width" | "height"> {
   /**
-   * Tamaño del icono. Acepta número (px) o cualquier valor CSS (e.g. "2rem", "24px").
+   * Icon size. Accepts a number (px) or any CSS value (e.g. "2rem", "24px").
    * @default "1em"
    */
   size?: number | string;
   /**
-   * Peso / estilo visual del icono.
+   * Visual style / weight of the icon.
    * @default "regular"
    */
   weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
   /**
-   * Color del icono. Acepta cualquier valor CSS válido.
+   * Icon color. Accepts any valid CSS color value.
    * @default "currentColor"
    */
   color?: string;
   /**
-   * Voltea el icono horizontalmente (útil para layouts RTL).
+   * Flips the icon horizontally (useful for RTL layouts).
    * @default false
-   */
-  mirrored?: boolean;
+   */  mirrored?: boolean;
 }
 
 const {
@@ -150,7 +149,7 @@ const {
   ...rest
 } = Astro.props;
 
-/** SVG interior por cada peso disponible */
+/** SVG inner content for each available weight */
 const svgPaths: Record<string, string> = {
 ${pathsLines}
 };
