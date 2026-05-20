@@ -12,10 +12,12 @@
     "url": "https://github.com/northsoon/phosphor-icons-astro/issues"
   },
   "exports": {
+    ".": "./index.js",
     "./icons/*.astro": "./icons/*.astro",
     "./icons/*": "./icons/*.astro"
   },
   "files": [
+    "index.js",
     "icons",
     "README.md",
     "LICENSE"
@@ -28,9 +30,12 @@
     "astro",
     "astro-component",
     "astro-integration",
+    "withastro",
     "phosphor",
     "icons",
     "phosphor-icons",
+    "icon",
+    "ui",
     "svg"
   ],
   "author": "Northsoon",
