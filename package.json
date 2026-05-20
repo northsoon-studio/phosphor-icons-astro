@@ -5,11 +5,11 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/northsoon/phosphor-icons-astro.git"
+    "url": "https://github.com/northsoon-studio/phosphor-icons-astro.git"
   },
-  "homepage": "https://github.com/northsoon/phosphor-icons-astro#readme",
+  "homepage": "https://github.com/northsoon-studio/phosphor-icons-astro#readme",
   "bugs": {
-    "url": "https://github.com/northsoon/phosphor-icons-astro/issues"
+    "url": "https://github.com/northsoon-studio/phosphor-icons-astro/issues"
   },
   "exports": {
     ".": "./index.js",

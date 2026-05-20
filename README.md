@@ -1,5 +1,8 @@
 # @northsoon/phosphor-icons-astro
 
+[![npm](https://img.shields.io/npm/v/@northsoon/phosphor-icons-astro)](https://www.npmjs.com/package/@northsoon/phosphor-icons-astro)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Phosphor icons as fully-typed Astro components — 1512 icons, 6 weights, zero client JavaScript.
 
 ```astro
@@ -121,6 +124,8 @@ npm run build
 
 - Icons: [Phosphor Icons](https://phosphoricons.com/) — MIT License
 - Icon data: [@phosphor-icons/core](https://github.com/phosphor-icons/core)
+- Repository: [github.com/northsoon-studio/phosphor-icons-astro](https://github.com/northsoon-studio/phosphor-icons-astro)
+- npm: [@northsoon/phosphor-icons-astro](https://www.npmjs.com/package/@northsoon/phosphor-icons-astro)
 
 ---
 
