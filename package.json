@@ -1,0 +1,48 @@
+{
+  "name": "@northsoon/phosphor-icons-astro",
+  "version": "1.0.0",
+  "description": "Phosphor icons as fully-typed Astro components — size, weight, color, mirrored and aria-label props out of the box",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/northsoon/phosphor-icons-astro.git"
+  },
+  "homepage": "https://github.com/northsoon/phosphor-icons-astro#readme",
+  "bugs": {
+    "url": "https://github.com/northsoon/phosphor-icons-astro/issues"
+  },
+  "exports": {
+    "./icons/*.astro": "./icons/*.astro",
+    "./icons/*": "./icons/*.astro"
+  },
+  "files": [
+    "icons",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "astro",
+    "astro-component",
+    "astro-integration",
+    "phosphor",
+    "icons",
+    "phosphor-icons",
+    "svg"
+  ],
+  "author": "Northsoon",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "peerDependencies": {
+    "astro": ">=3.0.0"
+  },
+  "devDependencies": {
+    "@phosphor-icons/core": "^2.0.8",
+    "astro": "^6.3.6"
+  }
+}
