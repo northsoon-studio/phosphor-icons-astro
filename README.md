@@ -164,11 +164,22 @@ npm run build
 
 ### v1.1.0
 
-- **Feat:** real Astro integration - `phosphorIcons()` with `astro:config:setup` hook, enables `npx astro add`
-- **Feat:** generic `<Icon name="..." />` component for dynamic icon names (lazy-loaded, kebab-case with autocomplete)
-- **Feat:** `icon-names.ts` manifest - `IconName` union type, `iconNames` list and `iconCount`, regenerated on every build
-- **Fix:** `mirrored` with object `style` props now merges `transform` instead of dropping the style
-- **Docs:** branding unified under Northsoon Studio
+**Highlights:** real Astro integration, generic `<Icon />` component, and full name autocomplete.
+
+**Added**
+- Astro integration `phosphorIcons()` with an `astro:config:setup` hook (`npx astro add` ready)
+- Generic `<Icon name="..." />` component for dynamic icon names (CMS, config, props): kebab-case names with IDE autocomplete, each icon lazy-loaded so unused icons stay out of the bundle
+- `icon-names.ts` manifest, regenerated on every build: `IconName` union type (all 1512 icons), runtime `iconNames` list, and `iconCount`
+- Installation guide for `npx astro add` plus manual config
+
+**Fixed**
+- `mirrored` combined with object `style` props now merges `transform` instead of dropping the user style
+
+**Changed**
+- `sideEffects: false` for better tree-shaking; new `Icon.astro` and `icon-names` export subpaths
+- Branding unified under Northsoon Studio
+
+> Per-icon imports (`import Heart from ".../icons/Heart.astro"`) remain the recommended default when the name is static - only imported icons end up in your bundle.
 
 ### v1.0.1
 
