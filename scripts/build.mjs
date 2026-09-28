@@ -1,5 +1,5 @@
 /**
- * build.mjs — Component generator for @northsoon/phosphor-icons-astro
+ * build.mjs - Component generator for @northsoon/phosphor-icons-astro
  *
  * How it works:
  *   1. Reads SVGs from @phosphor-icons/core (all weights: thin/light/regular/bold/fill/duotone)
@@ -22,7 +22,7 @@ const OUTPUT_DIR = path.join(ROOT, "icons");
 /** All available weights in Phosphor */
 const WEIGHTS = ["thin", "light", "regular", "bold", "fill", "duotone"];
 
-/** Pre-compiled regexes — avoids creating new RegExp() for each of the ~9000 SVG files */
+/** Pre-compiled regexes - avoids creating new RegExp() for each of the ~9000 SVG files */
 const weightSuffixRegex = Object.fromEntries(WEIGHTS.map((w) => [w, new RegExp(`-${w}$`)]));
 
 // ---------------------------------------------------------------------------
@@ -112,8 +112,8 @@ for (const [kebabName, weightPaths] of iconMap) {
     .join(",\n");
 
   const fileContent = `---
-// Auto-generated — do not edit manually
-// Icon: ${kebabName}  |  Source: @phosphor-icons/core (MIT License — https://phosphoricons.com)
+// Auto-generated - do not edit manually
+// Icon: ${kebabName}  |  Source: @phosphor-icons/core (MIT License - https://phosphoricons.com)
 import type { HTMLAttributes } from "astro/types";
 
 export interface Props extends Omit<HTMLAttributes<"svg">, "width" | "height"> {
@@ -156,10 +156,24 @@ ${pathsLines}
 
 const svgContent = svgPaths[weight] ?? svgPaths["regular"] ?? "";
 
-// Merge mirrored transform with any user-provided style prop
-const style = mirrored
-  ? ["transform: scaleX(-1)", typeof styleProp === "string" ? styleProp : ""].filter(Boolean).join("; ")
-  : styleProp;
+// Merge mirrored transform with any user-provided style prop.
+// String styles are concatenated; object styles get the transform key merged
+// (the user transform runs after the mirror flip).
+const style = !mirrored
+  ? styleProp
+  : typeof styleProp === "string"
+    ? ["transform: scaleX(-1)", styleProp].filter(Boolean).join("; ")
+    : styleProp != null && typeof styleProp === "object"
+      ? {
+          ...(styleProp as Record<string, unknown>),
+          transform: [
+            "scaleX(-1)",
+            (styleProp as Record<string, unknown>).transform,
+          ]
+            .filter(Boolean)
+            .join(" "),
+        }
+      : "transform: scaleX(-1)";
 ---
 
 <!-- role="img" + aria-label when meaningful; role="presentation" + aria-hidden when decorative -->
@@ -184,4 +198,32 @@ const style = mirrored
   generated++;
 }
 
+// ---------------------------------------------------------------------------
+// 4. Generate icon-names.ts - IconName union + runtime list for <Icon />
+// ---------------------------------------------------------------------------
+
+const sortedNames = [...iconMap.keys()].sort();
+const namesUnion = sortedNames.map((n) => `  | "${n}"`).join("\n");
+const namesArray = sortedNames.map((n) => `  "${n}",`).join("\n");
+
+const manifestContent = `// Auto-generated - do not edit manually
+// ${sortedNames.length} icons from @phosphor-icons/core (MIT License - https://phosphoricons.com)
+// Run \`npm run build\` to regenerate after updating @phosphor-icons/core.
+
+/** Kebab-case icon name, e.g. "rocket-launch". Powers <Icon name="..." /> autocomplete. */
+export type IconName =
+${namesUnion};
+
+/** All icon names at runtime (for validation, search, docs). */
+export const iconNames: IconName[] = [
+${namesArray}
+];
+
+/** Number of icons in this build. */
+export const iconCount: number = ${sortedNames.length};
+`;
+
+fs.writeFileSync(path.join(ROOT, "icon-names.ts"), manifestContent, "utf-8");
+
 console.log(`✅ ${generated} componentes generados → icons/`);
+console.log(`✅ icon-names.ts generado (${sortedNames.length} iconos)`);

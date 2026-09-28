@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@northsoon/phosphor-icons-astro)](https://www.npmjs.com/package/@northsoon/phosphor-icons-astro)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-Phosphor icons as fully-typed Astro components — 1512 icons, 6 weights, zero client JavaScript.
+Phosphor icons as fully-typed Astro components - 1512 icons, 6 weights, zero client JavaScript.
 
 ```astro
 <Heart size={24} weight="fill" color="red" aria-label="Add to favorites" />
@@ -14,7 +14,23 @@ Phosphor icons as fully-typed Astro components — 1512 icons, 6 weights, zero c
 ## Installation
 
 ```bash
+npx astro add @northsoon/phosphor-icons-astro
+```
+
+Or manually:
+
+```bash
 npm install @northsoon/phosphor-icons-astro
+```
+
+```js
+// astro.config.mjs
+import { defineConfig } from "astro/config";
+import phosphorIcons from "@northsoon/phosphor-icons-astro";
+
+export default defineConfig({
+  integrations: [phosphorIcons()],
+});
 ```
 
 ---
@@ -31,7 +47,7 @@ import Heart        from '@northsoon/phosphor-icons-astro/icons/Heart.astro';
 <!-- Default: size="1em", weight="regular", color="currentColor" -->
 <RocketLaunch />
 
-<!-- Change weight with a prop — no need to change the import -->
+<!-- Change weight with a prop - no need to change the import -->
 <RocketLaunch weight="bold" />
 <RocketLaunch weight="duotone" />
 <RocketLaunch weight="fill" />
@@ -44,10 +60,10 @@ import Heart        from '@northsoon/phosphor-icons-astro/icons/Heart.astro';
 <Heart color="#e74c3c" weight="fill" />
 <Heart color="var(--color-accent)" />
 
-<!-- Decorative icon — aria-hidden="true" applied automatically -->
+<!-- Decorative icon - aria-hidden="true" applied automatically -->
 <RocketLaunch />
 
-<!-- Meaningful icon — pass aria-label to set role="img" -->
+<!-- Meaningful icon - pass aria-label to set role="img" -->
 <RocketLaunch aria-label="Launch rocket" />
 
 <!-- Horizontal mirror for RTL layouts -->
@@ -56,6 +72,21 @@ import Heart        from '@northsoon/phosphor-icons-astro/icons/Heart.astro';
 <!-- Any standard SVG / HTML attribute is accepted -->
 <Heart class="icon icon-heart" data-testid="heart-icon" />
 ```
+
+### Generic `<Icon />` (dynamic names)
+
+When the icon name comes from a CMS, config, or prop, use the generic component - names are kebab-case with full IDE autocomplete:
+
+```astro
+---
+import Icon from '@northsoon/phosphor-icons-astro/Icon.astro';
+---
+
+<Icon name="rocket-launch" weight="bold" size={32} />
+<Icon name="heart" color="#e74c3c" aria-label="Favorites" />
+```
+
+> Prefer per-icon imports when the name is static - only imported icons end up in your bundle. `<Icon />` lazy-loads a single icon per name, but the per-icon import is still leaner.
 
 ---
 
@@ -71,7 +102,7 @@ Every icon component shares the same interface:
 | `mirrored` | `boolean` | `false` | Flip horizontally (RTL support) |
 | `aria-label` | `string` | `undefined` | Adds `role="img"`. Without it, `aria-hidden="true"` is applied |
 | `class` | `string` | `undefined` | CSS class |
-| `...rest` | `HTMLAttributes<svg>` | — | Any valid SVG attribute (`data-*`, `id`, `style`, etc.) |
+| `...rest` | `HTMLAttributes<svg>` | - | Any valid SVG attribute (`data-*`, `id`, `style`, etc.) |
 
 ---
 
@@ -89,7 +120,7 @@ Icons are imported using `PascalCase`. Find any icon at [phosphoricons.com](http
 
 ## Generating icons (local development)
 
-The `icons/` directory is in `.gitignore` and must be generated locally:
+The `icons/` directory and `icon-names.ts` are in `.gitignore` and must be generated locally (the generic `<Icon />` component needs both):
 
 ```bash
 npm install
@@ -122,13 +153,29 @@ npm run build
 
 ## Credits
 
-- Icons: [Phosphor Icons](https://phosphoricons.com/) — MIT License
+- Icons: [Phosphor Icons](https://phosphoricons.com/) - MIT License
 - Icon data: [@phosphor-icons/core](https://github.com/phosphor-icons/core)
 - Repository: [github.com/northsoon-studio/phosphor-icons-astro](https://github.com/northsoon-studio/phosphor-icons-astro)
 - npm: [@northsoon/phosphor-icons-astro](https://www.npmjs.com/package/@northsoon/phosphor-icons-astro)
 
 ---
 
+## Changelog
+
+### v1.1.0
+
+- **Feat:** real Astro integration - `phosphorIcons()` with `astro:config:setup` hook, enables `npx astro add`
+- **Feat:** generic `<Icon name="..." />` component for dynamic icon names (lazy-loaded, kebab-case with autocomplete)
+- **Feat:** `icon-names.ts` manifest - `IconName` union type, `iconNames` list and `iconCount`, regenerated on every build
+- **Fix:** `mirrored` with object `style` props now merges `transform` instead of dropping the style
+- **Docs:** branding unified under Northsoon Studio
+
+### v1.0.1
+
+- Initial public release - 1512 icons, 6 weights, typed props
+
+---
+
 ## License
 
-MIT
+MIT © [Northsoon Studio](https://northsoon.com)

@@ -1,0 +1,90 @@
+---
+/**
+ * Icon - generic Phosphor icon by name.
+ *
+ * Prefer per-icon imports when the name is static (better tree-shaking -
+ * only the icons you import end up in the build):
+ *
+ *   import Heart from "@northsoon/phosphor-icons-astro/icons/Heart.astro";
+ *
+ * Use this component when the icon name is dynamic (CMS, config, props):
+ *
+ *   import Icon from "@northsoon/phosphor-icons-astro/Icon.astro";
+ *   <Icon name="rocket-launch" weight="bold" size={32} />
+ *
+ * Names are kebab-case (`rocket-launch`) with full IDE autocomplete via
+ * the generated `IconName` type.
+ */
+import type { HTMLAttributes } from "astro/types";
+import type { IconName } from "./icon-names";
+
+export interface Props extends Omit<HTMLAttributes<"svg">, "width" | "height"> {
+  /** Kebab-case icon name, e.g. "rocket-launch". Autocompleted from IconName. */
+  name: IconName;
+  /**
+   * Icon size. Accepts a number (px) or any CSS value (e.g. "2rem", "24px").
+   * @default "1em"
+   */
+  size?: number | string;
+  /**
+   * Visual style / weight of the icon.
+   * @default "regular"
+   */
+  weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone";
+  /**
+   * Icon color. Accepts any valid CSS color value.
+   * @default "currentColor"
+   */
+  color?: string;
+  /**
+   * Flips the icon horizontally (useful for RTL layouts).
+   * @default false
+   */
+  mirrored?: boolean;
+}
+
+const {
+  name,
+  size = "1em",
+  weight = "regular",
+  color = "currentColor",
+  mirrored = false,
+  "aria-label": ariaLabel,
+  class: className,
+  style: styleProp,
+  ...rest
+} = Astro.props;
+
+const toPascalCase = (value: string): string =>
+  value
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("");
+
+const file = `./icons/${toPascalCase(name)}.astro`;
+
+/** Lazily loads a single icon - icons not used stay out of the bundle. */
+const loaders = import.meta.glob<{ default: unknown }>("./icons/*.astro");
+const load = loaders[file];
+
+if (!load) {
+  throw new Error(
+    `[@northsoon/phosphor-icons-astro] Unknown icon: "${name}" (looked for ${file}). Check the name at https://phosphoricons.com`,
+  );
+}
+
+const { default: IconComponent } = (await load()) as {
+  default: (_props: Record<string, unknown>) => unknown;
+};
+---
+
+<IconComponent
+  size={size}
+  weight={weight}
+  color={color}
+  mirrored={mirrored}
+  aria-label={ariaLabel}
+  class={className}
+  style={styleProp}
+  {...rest}
+/>
